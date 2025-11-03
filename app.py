@@ -1,8 +1,12 @@
 # === Python Packages ===
 import streamlit as st
+import requests
 
 # === Utils ===
 from src.utils import init_sess, get_sess_id
+
+# === Backend URL ===
+API_URL = "http://127.0.0.1:8000"
 
 # === Main UI function ===
 def main() -> None:
@@ -45,6 +49,35 @@ def main() -> None:
                 bool(st.session_state["age"]) and
                 bool(st.session_state["level"])
             ):
+                ## === Data to pass from frontend to backend ===
+                payload = {
+                    "name": st.session_state["name"],
+                    "age": st.session_state["age"],
+                    "level": st.session_state["level"],
+                }
+
+                ## === Connecting to the backend ===
+                try:
+                    response = requests.post(
+                        f"{API_URL}/start",
+                        json = payload
+                    )
+
+                    if response.status_code == 200:
+                        data = response.json()
+
+                        # === Save returned values in session_state ===
+                        st.session_state["session_id"] = data["session_id"]
+                        st.session_state["current_question"] = data["question"]
+                        st.session_state["correct_answer"] = data["correct_answer"]
+
+                        st.info(f"**Question:** {data['question']}")
+                    else:
+                        st.error(f"Error: {response.status_code} - {response.text}")
+
+                except requests.exceptions.ConnectionError as e:
+                    st.error("⚠️ Unable to connect to the backend. Please ensure FastAPI is running.")
+
                 st.success("Proceeding to the Quiz.")
 
             else:

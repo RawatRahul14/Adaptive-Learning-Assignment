@@ -13,7 +13,9 @@ def init_sess():
         "session_id": None,
         "name": None,
         "age": None,
-        "level": None
+        "level": None,
+        "current_question": None,
+        "correct_answer": None
     }
 
     ## === Initialising using the for loop ===
