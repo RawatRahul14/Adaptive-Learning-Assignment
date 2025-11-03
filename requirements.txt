@@ -1,0 +1,6 @@
+# === Frontend ===
+streamlit
+
+# === Backend ===
+fastapi
+uvicorn
